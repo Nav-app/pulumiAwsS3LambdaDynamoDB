@@ -49,13 +49,12 @@ const pythonLambda = new aws.lambda.Function("aws-lambda-dynamodb-python", {
     role: docsHandlerRole.arn
 });
 
-// Give the bucket permission to invoke the lambda.
+// Give the bucket permission to invoke the lambda and trigger lambda when any object is created in the bucket.
 const permission = new aws.lambda.Permission("invokelambda", {
   function: pythonLambda,
   action: "lambda:InvokeFunction",
   principal: "s3.amazonaws.com", sourceArn: docsBucket.id.apply(bucketName => `arn:aws:s3:::${bucketName}`), });
 
-  // Now hookup a notification that will trigger the lambda when any object is created in the bucket.
 const notification = new aws.s3.BucketNotification("onAnyObjectCreated", {
       bucket: docsBucket.id,
       lambdaFunctions: [{
